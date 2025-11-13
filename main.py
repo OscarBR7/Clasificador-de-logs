@@ -115,7 +115,7 @@ def main():
 
   archivo_json = []
 
-  for i, bloque in enumerate(bloques_de_logs[:1], start=1):
+  for i, bloque in enumerate(bloques_de_logs, start=1):
     #Verficar si Gemini está disponible
     if gemini.available:
         etiquetas = gemini.classify(bloque)

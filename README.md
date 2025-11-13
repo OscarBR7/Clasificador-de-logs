@@ -117,9 +117,33 @@ El sistema clasifica los logs en las siguientes categorías:
 | `user_instruction` | Instrucciones del usuario |
 | `llm_response` | Respuestas generadas por modelos LLM |
 
-### Consideraciones
+### Decisiones tecnicas relevantes
 - Si Gemini no está disponible o falla, el sistema utiliza un clasificador local basado en reglas (palabras clave)
 - Esto garantiza que el script siempre produzca resultados
+
+### Manejo de errores
+- Try-catch para capturar errores de importanción de dependencias, conexión con el modelo, formateo de JSON.
+- Prints descriptivos para facilitar la depuración
+
+## Troubleshooting
+
+### Error: "Gemini disponible: False"
+- Verifica que la API Key esté configurada correctamente
+- Verificar API Key:
+```bash
+echo $env:GEMINI_API_KEY
+```
+
+### Error: "ModuleNotFoundError: No module named 'google.generativeai'"
+- Asegurar de haber instalado `google-generativeai` con:
+```bash
+pip install google-generativeai
+```
+
+### Asegura que el archivo logs este en el mismo directorio
+- Verificar que el archivo `logs.txt` esté en el mismo directorio que `main.py`
+
+
 
 ## Autor
 
