@@ -3,7 +3,7 @@ import os
 import json
 
 # Lista de etiquetas permitidas
-TAXONOMIA = [
+lista_etiquetas = [
   "sql_query",
   "data_retrieval",
   "update_operation",
@@ -40,7 +40,7 @@ def separar_logs_bloques(texto):
 def clasificar_por_etiquetas(texto):
   """
   Clasifica el bloque usando palabras clave
-  Devuelve una lista de etiquetas pertenecientes a TAXONOMIA.
+  Devuelve una lista de etiquetas pertenecientes a lista_etiquetas.
   """
   etiquetas = set()
   t = texto.lower()
@@ -99,14 +99,10 @@ def clasificar_por_etiquetas(texto):
   if "[llm response]" in t:
       etiquetas.add("llm_response")
 
-  # Ordenamos según TAXONOMIA
-  return [e for e in TAXONOMIA if e in etiquetas]
+  # Se ordena según lista_etiquetas 
+  return [e for e in lista_etiquetas if e in etiquetas]
 
-
-
-
-#Función principal del script
-if __name__ == "__main__":
+def main():
   # Iniciar proceso de lectura y clasificación de logs
   archivo_logs = 'logs.txt'
   texto = leer_archivo_logs(archivo_logs)
@@ -119,7 +115,7 @@ if __name__ == "__main__":
 
   archivo_json = []
 
-  for i, bloque in enumerate(bloques_de_logs, start=1):
+  for i, bloque in enumerate(bloques_de_logs[:1], start=1):
     #Verficar si Gemini está disponible
     if gemini.available:
         etiquetas = gemini.classify(bloque)
@@ -141,3 +137,8 @@ if __name__ == "__main__":
   with open('output.json', 'w', encoding='utf-8') as f:
     json.dump(archivo_json, f, ensure_ascii=False, indent=2)
   print("Archivo output.json creado correctamente")
+
+
+#Función principal del script
+if __name__ == "__main__":
+  main()
