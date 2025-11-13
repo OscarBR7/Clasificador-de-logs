@@ -32,13 +32,13 @@ class GeminiClient:
 
         prompt = f"""
     Eres un clasificador de logs.
-    Devuelve UNICAMENTE un JSON válido con este formato:
+    Devuelve ÚNICAMENTE un JSON válido con este formato:
 
     {{
     "etiquetas": ["etiqueta1", "etiqueta2"]
     }}
 
-    Sin texto adicional, sin explicaciones, sin comentarios.
+    Sin texto adicional, sin explicaciones, sin comentarios, sin markdown.
     Texto a analizar:
 
     \"\"\"{texto}\"\"\"
@@ -47,12 +47,24 @@ class GeminiClient:
         try:
             respuesta = self.model.generate_content(prompt)
             texto_respuesta = respuesta.text.strip()
-
             
+            # Print: Para ver la respuesta de Gemini
+            print(f"Respuesta raw de Gemini: {texto_respuesta[:200]}")
+            
+            # Limpiar respuesta generada tipo markdown
+            if texto_respuesta.startswith('```'):
+                texto_respuesta = texto_respuesta.split('```')[1]
+                if texto_respuesta.startswith('json'):
+                    texto_respuesta = texto_respuesta[4:].strip()
+            
+            #Retornar las etiquetas parseadas desde JSON
             data = json.loads(texto_respuesta)
             return data.get("etiquetas", [])
 
-        except Exception as e:
-            print("Error en llamada a Gemini:", e)
+        except json.JSONDecodeError as e:
+            print(f"Error parseando JSON: {e}")
+            print(f"Texto recibido: {texto_respuesta[:500]}")
             return []
-
+        except Exception as e:
+            print(f"Error en llamada a Gemini: {e}")
+            return []

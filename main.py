@@ -37,7 +37,6 @@ def separar_logs_bloques(texto):
       bloques.append(bloque_limpio)
   return bloques
 
-
 def clasificar_por_etiquetas(texto):
   """
   Clasifica el bloque usando palabras clave
@@ -108,7 +107,7 @@ def clasificar_por_etiquetas(texto):
 
 #Función principal del script
 if __name__ == "__main__":
-
+  # Iniciar proceso de lectura y clasificación de logs
   archivo_logs = 'logs.txt'
   texto = leer_archivo_logs(archivo_logs)
   bloques_de_logs = separar_logs_bloques(texto) 
@@ -120,24 +119,25 @@ if __name__ == "__main__":
 
   archivo_json = []
 
-  for i, bloque in enumerate(bloques_de_logs[:2], start=1):
-
+  for i, bloque in enumerate(bloques_de_logs, start=1):
+    #Verficar si Gemini está disponible
     if gemini.available:
         etiquetas = gemini.classify(bloque)
-
+        #Verificar si Gemini retornó JSON válido
         if not etiquetas:
             print("Gemini no retorno JSON, usando clasificador local")
             etiquetas = clasificar_por_etiquetas(bloque)
-
     else:
         print("Gemini no esta disponible, usando clasificador local")
         etiquetas = clasificar_por_etiquetas(bloque)
-    
+  
+  # Construir el objeto para el archivo JSON 
     archivo_json.append({
       "log_id": i,
       "texto": bloque,
       "etiquetas": etiquetas
     })
+  # Guardar el resultado en output.json
   with open('output.json', 'w', encoding='utf-8') as f:
     json.dump(archivo_json, f, ensure_ascii=False, indent=2)
   print("Archivo output.json creado correctamente")
